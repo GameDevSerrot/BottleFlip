@@ -10,7 +10,7 @@ public class BottleCamera : MonoBehaviour
 	// Use this for initialization
 	void Start ()
     {
-        offset = transform.position - target.transform.position;
+        offset = target.transform.position - transform.position;
 	}
 	
 	// Update is called once per frame
@@ -19,8 +19,8 @@ public class BottleCamera : MonoBehaviour
         float desiredAngle = target.transform.eulerAngles.y;
         Quaternion rotation = Quaternion.Euler(0, desiredAngle, 0);
 
-        // transform.position = target.transform.position - (rotation * offset);
-        transform.position = target.transform.position + offset;
+        transform.position = target.transform.position - (rotation * offset);
+        //transform.position = target.transform.position - (rotation * offset);
         transform.LookAt(target.transform);
     }
 }

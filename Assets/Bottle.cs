@@ -3,45 +3,45 @@ using System.Collections;
 
 public class Bottle : MonoBehaviour
 {
-    public bool isFlipping = false;
-    public float flipTime;
-    public float flipTimer;
+    public Player player;
+    public GameObject bottlePrefab;
 
-    public float torque;
+    public GameObject gameManagerObject;
+    private GameManager gameManager;
 
-    public float xForce;
-    public float yForce;
-    public float zForce;
-
-    private Rigidbody rb;
-
-	// Use this for initialization
-	void Start ()
+    public bool hitTarget = false;
+    void Start()
     {
-        rb = GetComponent<Rigidbody>();
-	}
-	
-	// Update is called once per frame
-	void Update ()
+        gameManagerObject = GameObject.Find("Game Manager");
+        gameManager = gameManagerObject.GetComponent<GameManager>();
+    }
+
+    void Update()
     {
-        if (isFlipping)
+        if (hitTarget)
         {
-            Flip();
+            if (gameObject.GetComponent<Rigidbody>().velocity.magnitude < .01)
+            {
+                Instantiate(bottlePrefab, transform.position, Quaternion.identity);
+                transform.position = player.transform.position;
+                hitTarget = false;
+                gameManager.SwitchPlayers();
+            }
         }
-	}
 
-    public void Flip()
-    {
-        rb.AddForce(new Vector3(xForce, yForce, zForce));
-
-        rb.AddTorque(transform.right * torque);
-
-        flipTimer += Time.deltaTime;
-
-        if (flipTimer > flipTime)
+        if (transform.position.y <= -10)
         {
-            isFlipping = !isFlipping;
-            flipTimer = 0.0f;
+            transform.position = player.transform.position;
+            gameManager.SwitchPlayers();
+            
         }
-    } 
+    }
+
+    void OnCollisionEnter(Collision Collision)
+    {
+        if (Collision.collider.CompareTag("target"))
+        {
+            hitTarget = true;
+        }
+    }
 }
